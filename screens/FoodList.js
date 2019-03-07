@@ -5,7 +5,9 @@ import {
   StyleSheet,
   FlatList,
   Dimensions,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
+  UIManager,
+  LayoutAnimation
 } from "react-native";
 import { Constants } from "expo";
 import ImageFrame from "../components/ImageFrame";
@@ -26,6 +28,12 @@ export default class ListFoods extends Component {
     this.setState({ data: this.props.navigation.getParam("foodList") });
   }
 
+  componentWillUpdate() {
+    UIManager.setLayoutAnimationEnabledExperimental &&
+      UIManager.setLayoutAnimationEnabledExperimental(true);
+    LayoutAnimation.easeInEaseOut();
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -36,6 +44,39 @@ export default class ListFoods extends Component {
           renderItem={({ item }) => (
             <FoodListItem food={item} navigation={this.props.navigation} />
           )}
+          ListHeaderComponent={
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center"
+              }}
+            >
+              <Text
+                onPress={() => this.props.navigation.goBack()}
+                style={{
+                  position: "absolute",
+                  left: 5,
+                  fontSize: 30,
+                  padding: 10,
+                  color: "#EB5757",
+                  fontFamily: "fingerpaint"
+                }}
+              >
+                &lt;-
+              </Text>
+              <Text
+                style={{
+                  marginLeft: 18,
+                  fontSize: 25,
+                  color: "#EB5757",
+                  fontFamily: "fingerpaint"
+                }}
+              >
+                Bunları Yapabilirsin
+              </Text>
+            </View>
+          }
           keyExtractor={(item, index) => index.toString()}
         />
       </View>
@@ -44,6 +85,12 @@ export default class ListFoods extends Component {
 }
 
 class FoodListItem extends Component {
+  componentWillUpdate() {
+    UIManager.setLayoutAnimationEnabledExperimental &&
+      UIManager.setLayoutAnimationEnabledExperimental(true);
+    LayoutAnimation.easeInEaseOut();
+  }
+  
   renderIngredients = () =>
     this.props.food.Malzeme.map((ingredient, index) => (
       <Text key={index.toString()} style={styles.ingredients}>
@@ -52,20 +99,29 @@ class FoodListItem extends Component {
       </Text>
     ));
 
+    
+
   render() {
     return (
       <View style={styles.foodListItemArea}>
-        <TouchableWithoutFeedback>
+        <TouchableWithoutFeedback
+          onPress={() =>
+            this.props.navigation.navigate("FoodScreen", {
+              food: this.props.food
+            })
+          }
+        >
           <View style={styles.foodListItemContainer}>
             <ImageFrame image={this.props.food.image} />
             <View style={{ marginTop: 20 }}>
               <Text style={styles.title}>{this.props.food.FoodName}</Text>
+              <Text />
               <View
                 style={{
                   flexDirection: "row",
                   marginTop: 5,
                   left: 0,
-                  width: '70%'
+                  width: "70%"
                 }}
               >
                 {this.renderIngredients()}
@@ -124,5 +180,9 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 0,
     top: 23
+  },
+  time: {
+    color: "#F2994A",
+    fontFamily: "fingerpaint"
   }
 });
