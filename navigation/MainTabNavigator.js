@@ -4,11 +4,13 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 
 import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
+import FoodList from '../screens/FoodList';
 import LinksScreen from '../screens/LinksScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 
 const HomeStack = createStackNavigator({
   Home: HomeScreen,
+  FoodList
 });
 
 HomeStack.navigationOptions = {
@@ -57,4 +59,8 @@ export default createBottomTabNavigator({
   HomeStack,
   LinksStack,
   SettingsStack,
+}, {
+  defaultNavigationOptions: {
+    tabBarVisible: false
+  }
 });

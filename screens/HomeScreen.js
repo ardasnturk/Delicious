@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Image,
   Platform,
@@ -7,182 +7,238 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from 'react-native';
-import { WebBrowser } from 'expo';
+  Button,
+  UIManager,
+  LayoutAnimation,
+  Dimensions,
+  TextInput,
+  Alert,
+  ActivityIndicator
+} from "react-native";
+import { Constants } from "expo";
+import * as firebase from "firebase";
+import IngredientSection from "../components/IngredientSection";
+import SelectedIngredientsSection from "../components/SelectedIngredientsSection";
 
-import { MonoText } from '../components/StyledText';
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 export default class HomeScreen extends React.Component {
-  static navigationOptions = {
-    header: null,
+  static navigationOptions = ({ navigation }) => ({
+    header: null
+  });
+
+  state = {
+    data: [
+      "biber",
+      "maydanoz",
+      "peynir",
+      "yag",
+      "elma",
+      "armut",
+      "domates",
+      "havuç",
+      "ananas",
+      "deneme",
+      "elma",
+      "armut",
+      "domates",
+      "havuç",
+      "ananas",
+      "deneme",
+      "elma",
+      "armut",
+      "domates",
+      "havuç",
+      "ananas",
+      "deneme",
+      "elma",
+      "armut",
+      "domates",
+      "havuç",
+      "ananas",
+      "deneme",
+      "elma",
+      "armut",
+      "domates",
+      "havuç",
+      "ananas",
+      "deneme",
+      "elma",
+      "armut",
+      "domates",
+      "havuç"
+    ],
+    selectedIngredients: [],
+    searching: false
   };
+
+  componentWillUpdate() {
+    UIManager.setLayoutAnimationEnabledExperimental &&
+      UIManager.setLayoutAnimationEnabledExperimental(true);
+    LayoutAnimation.easeInEaseOut();
+  }
 
   render() {
     return (
       <View style={styles.container}>
-        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-          <View style={styles.welcomeContainer}>
-            <Image
-              source={
-                __DEV__
-                  ? require('../assets/images/robot-dev.png')
-                  : require('../assets/images/robot-prod.png')
-              }
-              style={styles.welcomeImage}
-            />
-          </View>
+        <ScrollView
+          style={styles.container}
+          contentContainerStyle={styles.contentContainer}
+        >
+          <TextInput
+            style={styles.searchBar}
+            placeholder="Malzemeleri Ara"
+            placeholderTextColor="#27AE60"
+          />
+          <IngredientSection
+            color="#27AE60"
+            title="Meyve & Sebze"
+            data={this.state.data}
+            addIngredient={this.addIngredient}
+          />
+          <IngredientSection
+            color="#9B51E0"
+            title="Et & Balık"
+            data={this.state.data}
+            addIngredient={this.addIngredient}
+          />
 
-          <View style={styles.getStartedContainer}>
-            {this._maybeRenderDevelopmentModeWarning()}
-
-            <Text style={styles.getStartedText}>Get started by opening</Text>
-
-            <View style={[styles.codeHighlightContainer, styles.homeScreenFilename]}>
-              <MonoText style={styles.codeHighlightText}>screens/HomeScreen.js aDSSADASDsaaS</MonoText>
-            </View>
-
-            <Text style={styles.getStartedText}>
-              Change this text and your app will automatically reload.
-            </Text>
-          </View>
-
-          <View style={styles.helpContainer}>
-            <TouchableOpacity onPress={this._handleHelpPress} style={styles.helpLink}>
-              <Text style={styles.helpLinkText}>Help, it didn’t automatically reload!</Text>
-            </TouchableOpacity>
-          </View>
+          <IngredientSection
+            color="#EB5757"
+            title="Süt Ürünleri & Kahvaltılıklar"
+            data={this.state.data}
+            addIngredient={this.addIngredient}
+          />
+          <IngredientSection
+            color="#F2994A"
+            title="Gıda & Şekerleme"
+            data={this.state.data}
+            addIngredient={this.addIngredient}
+          />
+          <SelectedIngredientsSection
+            color="#F2994A"
+            title="Seçili Malzemeler"
+            data={this.state.selectedIngredients}
+            deleteIngredient={this.deleteIngredient}
+          />
+          <TouchableOpacity disabled={this.state.searching} onPress={this.searchWithIngredients}>
+            {this.state.searching ? (
+              <ActivityIndicator size="small" color="#EB5757" />
+            ) : (
+              <Text style={styles.searchButtonText}>Yemekleri Ara</Text>
+            )}
+          </TouchableOpacity>
         </ScrollView>
-
-        <View style={styles.tabBarInfoContainer}>
-          <Text style={styles.tabBarInfoText}>This is a tab bar. You can edit it in:</Text>
-
-          <View style={[styles.codeHighlightContainer, styles.navigationFilename]}>
-            <MonoText style={styles.codeHighlightText}>navigation/MainTabNavigator.js</MonoText>
-          </View>
-        </View>
       </View>
     );
   }
 
-  _maybeRenderDevelopmentModeWarning() {
-    if (__DEV__) {
-      const learnMoreButton = (
-        <Text onPress={this._handleLearnMorePress} style={styles.helpLinkText}>
-          Learn more
-        </Text>
-      );
-
-      return (
-        <Text style={styles.developmentModeText}>
-          Development mode is enabled, your app will be slower but you can use useful development
-          tools. {learnMoreButton}
-        </Text>
-      );
-    } else {
-      return (
-        <Text style={styles.developmentModeText}>
-          You are not in development mode, your app will run at full speed.
-        </Text>
-      );
+  addIngredient = ingredient => {
+    const { selectedIngredients } = this.state;
+    if (!selectedIngredients.includes(ingredient)) {
+      selectedIngredients.push(ingredient);
+      this.setState({ selectedIngredients });
     }
-  }
-
-  _handleLearnMorePress = () => {
-    WebBrowser.openBrowserAsync('https://docs.expo.io/versions/latest/guides/development-mode');
   };
 
-  _handleHelpPress = () => {
-    WebBrowser.openBrowserAsync(
-      'https://docs.expo.io/versions/latest/guides/up-and-running.html#can-t-see-your-changes'
-    );
+  deleteIngredient = ingredient => {
+    const { selectedIngredients } = this.state;
+    if (selectedIngredients.includes(ingredient)) {
+      for (let i = 0; i < selectedIngredients.length; i++) {
+        const element = selectedIngredients[i];
+        if (element === ingredient) {
+          selectedIngredients.splice(i, 1);
+          this.setState({ selectedIngredients });
+          break;
+        }
+      }
+    }
+  };
+
+  searchWithIngredients = () => {
+    const { selectedIngredients } = this.state;
+    const foodList = [];
+    if (selectedIngredients.length !== 0) {
+      this.setState({ searching: true });
+      firebase
+        .database()
+        .ref("foodList")
+        .once("value")
+        .then(foods => {
+          const foodsData = Object.values(foods.val());
+          for (let i = 0; i < foodsData.length; i++) {
+            const food = foodsData[i];
+            const { Malzeme } = food;
+            let matchedIngredients = 0;
+            for (let j = 0; j < Malzeme.length; j++) {
+              const ingredient = Malzeme[j];
+              if (selectedIngredients.includes(ingredient)) {
+                matchedIngredients++;
+              }
+            }
+
+            if (matchedIngredients === Malzeme.length) {
+              foodList.push(food);
+            }
+          }
+          setTimeout(() => {
+            this.setState({ searching: false });
+          }, 500);
+          return foodList;
+        })
+        .then(foodList => {
+          setTimeout(() => {
+            this.setState({ searching: false });
+          }, 500);
+          if (foodList.length !== 0)
+            this.props.navigation.navigate("FoodList", { foodList });
+          else
+            Alert.alert(
+              "Üzgünüm ama bu malzemelerle olmaz...",
+              "Bence birkaç malzeme daha eklemelisin. Malesef seçtiklerinle hiçbir yemek yapamadım."
+            );
+        });
+    } else {
+      Alert.alert(
+        "Tencere boş görünüyor!",
+        "Malzeme seçersen daha iyi olabilir."
+      );
+    }
   };
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-  },
-  developmentModeText: {
-    marginBottom: 20,
-    color: 'rgba(0,0,0,0.4)',
-    fontSize: 14,
-    lineHeight: 19,
-    textAlign: 'center',
+    backgroundColor: "#f2f2f2"
   },
   contentContainer: {
-    paddingTop: 30,
+    paddingTop: 20 + Constants.statusBarHeight,
+    paddingBottom: 20
   },
-  welcomeContainer: {
-    alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 20,
+  searchBar: {
+    borderColor: "#27AE60",
+    borderWidth: 1,
+    marginLeft: 20,
+    borderRadius: 5,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    width: SCREEN_WIDTH - 40,
+    fontFamily: "raleway-bold",
+    fontSize: 12,
+    color: "#27AE60"
   },
-  welcomeImage: {
-    width: 100,
-    height: 80,
-    resizeMode: 'contain',
-    marginTop: 3,
-    marginLeft: -10,
-  },
-  getStartedContainer: {
-    alignItems: 'center',
-    marginHorizontal: 50,
-  },
-  homeScreenFilename: {
-    marginVertical: 7,
-  },
-  codeHighlightText: {
-    color: 'rgba(96,100,109, 0.8)',
-  },
-  codeHighlightContainer: {
-    backgroundColor: 'rgba(0,0,0,0.05)',
-    borderRadius: 3,
-    paddingHorizontal: 4,
-  },
-  getStartedText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    lineHeight: 24,
-    textAlign: 'center',
-  },
-  tabBarInfoContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    ...Platform.select({
-      ios: {
-        shadowColor: 'black',
-        shadowOffset: { height: -3 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-      },
-      android: {
-        elevation: 20,
-      },
-    }),
-    alignItems: 'center',
-    backgroundColor: '#fbfbfb',
-    paddingVertical: 20,
-  },
-  tabBarInfoText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    textAlign: 'center',
-  },
-  navigationFilename: {
-    marginTop: 5,
-  },
-  helpContainer: {
-    marginTop: 15,
-    alignItems: 'center',
-  },
-  helpLink: {
+  searchButtonText: {
+    fontFamily: "raleway-bold",
+    fontSize: 13,
+    borderColor: "#EB5757",
+    borderWidth: 1,
+    marginLeft: 20,
+    borderRadius: 5,
     paddingVertical: 15,
-  },
-  helpLinkText: {
-    fontSize: 14,
-    color: '#2e78b7',
-  },
+    paddingHorizontal: 12,
+    width: SCREEN_WIDTH - 40,
+    color: "#EB5757",
+    textAlign: "center"
+  }
 });

@@ -1,13 +1,25 @@
-import React from 'react';
-import { Platform, StatusBar, StyleSheet, View } from 'react-native';
-import { AppLoading, Asset, Font, Icon } from 'expo';
-import AppNavigator from './navigation/AppNavigator';
+import React from "react";
+import { Platform, StatusBar, StyleSheet, View } from "react-native";
+import { AppLoading, Asset, Font, Icon } from "expo";
+import AppNavigator from "./navigation/AppNavigator";
+import firebase from "firebase";
 
 export default class App extends React.Component {
   state = {
-    isLoadingComplete: false,
+    isLoadingComplete: false
   };
 
+  componentWillMount() {
+    firebase.initializeApp({
+      apiKey: "AIzaSyCoLE5FJDLt7WetZnYninQSZA4JaFX7KN4",
+      authDomain: "bugunneyapsamtest.firebaseapp.com",
+      databaseURL: "https://bugunneyapsamtest.firebaseio.com",
+      projectId: "bugunneyapsamtest",
+      storageBucket: "bugunneyapsamtest.appspot.com",
+      messagingSenderId: "870898955412"
+    });
+  }
+  
   render() {
     if (!this.state.isLoadingComplete && !this.props.skipLoadingScreen) {
       return (
@@ -20,7 +32,7 @@ export default class App extends React.Component {
     } else {
       return (
         <View style={styles.container}>
-          {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
+          <StatusBar barStyle="dark-content" />
           <AppNavigator />
         </View>
       );
@@ -30,16 +42,22 @@ export default class App extends React.Component {
   _loadResourcesAsync = async () => {
     return Promise.all([
       Asset.loadAsync([
-        require('./assets/images/robot-dev.png'),
-        require('./assets/images/robot-prod.png'),
+        require("./assets/images/robot-dev.png"),
+        require("./assets/images/robot-prod.png")
       ]),
       Font.loadAsync({
+        raleway: require("./assets/fonts/Raleway-Regular.ttf"),
+        "raleway-black": require("./assets/fonts/Raleway-Black.ttf"),
+        "raleway-thin": require("./assets/fonts/Raleway-Thin.ttf"),
+        "raleway-light": require("./assets/fonts/Raleway-Light.ttf"),
+        "raleway-bold": require("./assets/fonts/Raleway-Bold.ttf"),
+        "fingerpaint": require("./assets/fonts/FingerPaint-Regular.ttf"),
         // This is the font that we are using for our tab bar
         ...Icon.Ionicons.font,
         // We include SpaceMono because we use it in HomeScreen.js. Feel free
         // to remove this if you are not using it in your app
-        'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),
-      }),
+        "space-mono": require("./assets/fonts/SpaceMono-Regular.ttf")
+      })
     ]);
   };
 
@@ -57,6 +75,6 @@ export default class App extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-  },
+    backgroundColor: "#fff"
+  }
 });
