@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { Constants } from "expo";
 import ImageFrame from "../components/ImageFrame";
+import Header from "../components/Header";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const CARD_WIDTH = SCREEN_WIDTH - 40;
@@ -45,37 +46,10 @@ export default class ListFoods extends Component {
             <FoodListItem food={item} navigation={this.props.navigation} />
           )}
           ListHeaderComponent={
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center"
-              }}
-            >
-              <Text
-                onPress={() => this.props.navigation.goBack()}
-                style={{
-                  position: "absolute",
-                  left: 5,
-                  fontSize: 30,
-                  padding: 10,
-                  color: "#EB5757",
-                  fontFamily: "fingerpaint"
-                }}
-              >
-                &lt;-
-              </Text>
-              <Text
-                style={{
-                  marginLeft: 18,
-                  fontSize: 25,
-                  color: "#EB5757",
-                  fontFamily: "fingerpaint"
-                }}
-              >
-                Bunları Yapabilirsin
-              </Text>
-            </View>
+            <Header
+              title="Bunları Yapabilirsin"
+              navigation={this.props.navigation}
+            />
           }
           keyExtractor={(item, index) => index.toString()}
         />
@@ -85,12 +59,16 @@ export default class ListFoods extends Component {
 }
 
 class FoodListItem extends Component {
+  state = {
+    animate: false
+  };
+
   componentWillUpdate() {
     UIManager.setLayoutAnimationEnabledExperimental &&
       UIManager.setLayoutAnimationEnabledExperimental(true);
     LayoutAnimation.easeInEaseOut();
   }
-  
+
   renderIngredients = () =>
     this.props.food.Malzeme.map((ingredient, index) => (
       <Text key={index.toString()} style={styles.ingredients}>
@@ -99,11 +77,17 @@ class FoodListItem extends Component {
       </Text>
     ));
 
-    
-
   render() {
     return (
-      <View style={styles.foodListItemArea}>
+      <View
+        style={[
+          styles.foodListItemArea,
+          {
+            zIndex: this.state.animate ? 10 : 1,
+            marginTop: this.state.animate ? -200 : null
+          }
+        ]}
+      >
         <TouchableWithoutFeedback
           onPress={() =>
             this.props.navigation.navigate("FoodScreen", {
@@ -149,7 +133,8 @@ const styles = StyleSheet.create({
   foodListItemArea: {
     marginLeft: 20,
     width: CARD_WIDTH,
-    marginVertical: 30
+    marginVertical: 30,
+    backgroundColor: "#f2f2f2"
   },
   foodListItemContainer: {
     width: CARD_WIDTH

@@ -16,13 +16,13 @@ export default class ImageFrame extends Component {
         <View
           style={[
             styles.frame,
-            { zIndex: 1, transform: [{ rotateZ: "3deg" }], backgroundColor: '#EB5757' }
+            { zIndex: 1, transform: [{ rotateZ: "3deg" }], backgroundColor: '#f2f2f2' }
           ]}
         />
         <View
           style={[
             styles.frame,
-            { zIndex: 2, transform: [{ rotateZ: "-3deg" }], backgroundColor: '#F2994A' }
+            { zIndex: 2, transform: [{ rotateZ: "-3deg" }], backgroundColor: '#f2f2f2' }
           ]}
         />
       </View>
