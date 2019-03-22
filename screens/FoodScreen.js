@@ -32,9 +32,9 @@ export default class FoodScreen extends Component {
         return "#F2994A";
       case 2:
         return "#27AE60";
-        case 3:
+      case 3:
         return "#2D9CDB";
-        case 4:
+      case 4:
         return "#9B51E0";
       default:
         return "#EB5757";
@@ -42,20 +42,19 @@ export default class FoodScreen extends Component {
   };
 
   renderIngredients = () =>
-    this.props.navigation
-      .getParam("food")
-      .Malzeme.map((ingredient, index) => (
-        <Text
-          style={{
-            fontFamily: "raleway-bold",
-            fontSize: 15,
-            color: this.randomColor(index % 5),
-            marginVertical: 3
-          }}
-        >
-          {ingredient.charAt(0).toUpperCase() + ingredient.slice(1)}
-        </Text>
-      ));
+    this.props.navigation.getParam("food").Malzeme.map((ingredient, index) => (
+      <Text
+        key={index.toString()}
+        style={{
+          fontFamily: "raleway-bold",
+          fontSize: 15,
+          color: this.randomColor(index % 5),
+          marginVertical: 3
+        }}
+      >
+        {ingredient.charAt(0).toUpperCase() + ingredient.slice(1)}
+      </Text>
+    ));
 
   render() {
     const {
@@ -117,7 +116,15 @@ export default class FoodScreen extends Component {
             </View>
           </View>
           <Subtitle title="Malzemeler" color="#EB5757" />
-          <View style={{ width: SCREEN_WIDTH - 60, marginLeft: 30, marginTop: 15, flexDirection: "column", alignItems: 'flex-start' }}>
+          <View
+            style={{
+              width: SCREEN_WIDTH - 60,
+              marginLeft: 30,
+              marginTop: 15,
+              flexDirection: "column",
+              alignItems: "flex-start"
+            }}
+          >
             {this.renderIngredients()}
           </View>
           <Subtitle title="Nasıl Yapılır?" color="#EB5757" />
@@ -157,11 +164,11 @@ const styles = StyleSheet.create({
     marginHorizontal: 20
   },
   howToCook: {
-    fontFamily: 'raleway',
+    fontFamily: "raleway",
     fontSize: 15,
-    width: '80%',
+    width: "80%",
     marginTop: 18,
     lineHeight: 22,
-    color: '#333b'
+    color: "#333b"
   }
 });

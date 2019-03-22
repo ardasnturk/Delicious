@@ -60,8 +60,13 @@ export default class ListFoods extends Component {
 
 class FoodListItem extends Component {
   state = {
-    animate: false
+    animate: false,
+    hardness: ""
   };
+
+  componentWillMount() {
+    this.setHardness();
+  }
 
   componentWillUpdate() {
     UIManager.setLayoutAnimationEnabledExperimental &&
@@ -76,6 +81,39 @@ class FoodListItem extends Component {
         {index !== this.props.food.Malzeme.length - 1 ? ", " : ""}
       </Text>
     ));
+
+  setHardness = () => {
+    const {
+      HazirlikSure: prepareTime,
+      PisirmeSure: cookTime
+    } = this.props.food;
+    let prepare = "";
+    let cook = "";
+
+    for (let i = 0; i < prepareTime.length; i++) {
+      const element = prepareTime[i];
+      if (element === " ") {
+        break;
+      } else {
+        prepare += element;
+      }
+    }
+
+    for (let i = 0; i < cookTime.length; i++) {
+      const element = cookTime[i];
+      if (element === " ") {
+        break;
+      } else {
+        cook += element;
+      }
+    }
+
+    const totalTime = parseInt(prepare) + parseInt(cook);
+    if (totalTime <= 20) this.setState({ hardness: "KOLAY" });
+    else if (totalTime > 20 && totalTime <= 45)
+      this.setState({ hardness: "ORTA" });
+    else this.setState({ hardness: "ZOR" });
+  };
 
   render() {
     return (
@@ -110,8 +148,10 @@ class FoodListItem extends Component {
               >
                 {this.renderIngredients()}
               </View>
-              <Text style={styles.category}>FASTFOOD</Text>
-              <Text style={styles.hardness}>KOLAY</Text>
+              <Text style={styles.category}>
+                {this.props.food.Category.toUpperCase()}
+              </Text>
+              <Text style={styles.hardness}>{this.state.hardness}</Text>
             </View>
           </View>
         </TouchableWithoutFeedback>
